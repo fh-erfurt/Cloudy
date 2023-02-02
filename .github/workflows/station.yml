@@ -33,6 +33,6 @@ jobs:
         file: ./stationapi.Dockerfile
         push: true
         #tags: ${{ steps.meta.outputs.tags }}
-        tags: ghcr.io/fh-erfurt/Cloudy:stationapi
+        tags: ghcr.io/fh-erfurt/cloudy:stationapi
         labels: ${{ steps.meta.outputs.labels }}
         
