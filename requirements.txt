@@ -1,5 +1,5 @@
 httpx==0.23.0
-fastapi==0.85.0
+fastapi~=0.89.1
 opentelemetry-instrumentation-fastapi==0.34b0
 opentelemetry-instrumentation-logging==0.34b0
 opentelemetry-exporter-jaeger-thrift==1.13.0
@@ -7,4 +7,6 @@ opentelemetry-exporter-jaeger-proto-grpc==1.13.0
 opentelemetry-api==1.13.0
 opentelemetry-sdk==1.13.0
 mariadb==1.0.9
-pydantic
+pydantic~=1.10.4
+uvicorn~=0.20.0
+starlette~=0.22.0

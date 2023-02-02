@@ -8,6 +8,9 @@ Dieses GitHub Repository enthält eine Konfiguration für eine Anwendung mit Doc
     weatherapi
     traefik
 
+Voraussetzung
+    python 3.9
+
 Installation
 
     Clone dieses Repository auf Ihren Computer:
