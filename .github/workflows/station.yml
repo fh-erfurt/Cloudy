@@ -5,7 +5,7 @@ on:
     # run the workflow only on changes
     # to the auth route and auth workflow
     branches:
-      - "main"
+      - "master"
     paths:
       - "app/stationapi.py"
       - "requirements.txt"
