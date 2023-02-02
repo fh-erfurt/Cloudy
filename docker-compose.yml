@@ -1,0 +1,94 @@
+services:
+  weatherdb:
+    image: mariadb
+    container_name: "weatherdb"
+    restart: always
+    environment:
+      - MARIADB_USER=weather
+      - MARIADB_PASSWORD=myweatherpassword
+      - MARIADB_ROOT_PASSWORD=mysupersecretrootpw
+      - MARIADB_DATABASE=weather
+    volumes:
+      - "/var/lib/docker/volumes/mysql/weatherdb:/var/lib/mysql"
+  stationdb:
+    image: mariadb
+    container_name: "stationdb"
+    restart: always
+    environment:
+      - MARIADB_USER=weatherstation
+      - MARIADB_PASSWORD=mystationpassword
+      - MARIADB_ROOT_PASSWORD=mysupersecretrootpw
+      - MARIADB_DATABASE=station
+    volumes:
+      - "/var/lib/docker/volumes/mysql/stationdb:/var/lib/mysql"
+  grafana:
+    image: grafana/grafana
+    container_name: "grafana"
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana-http.rule=Host(`grafana.draxento.de`)
+      - traefik.http.routers.grafana-http.entrypoints=web
+      - traefik.http.services.grafana-http.loadbalancer.server.port=3000
+  jagdwurst:
+    image: jaegertracing/all-in-one:latest
+    container_name: "jagdwurst"
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jagdwurst-http.rule=Host(`tracer.draxento.de`)
+      - traefik.http.routers.jagdwurst-http.entrypoints=web
+      - traefik.http.services.jagdwurst-http.loadbalancer.server.port=16686
+    ports:
+      - "6831:6831/udp"
+  stationapi:
+    build:
+      dockerfile: stationapi.Dockerfile
+#    container_name: "stationapi"
+    deploy:
+      replicas: 2
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.stationapi.loadbalancer.server.port=80
+      - traefik.http.routers.stationapi.rule=Host(`draxento.de`) && PathPrefix(`/station`)
+      - traefik.http.routers.stationapi.entrypoints=web
+      - traefik.http.middlewares.stationapi.stripprefix.prefixes=/station
+      - traefik.http.routers.stationapi.middlewares=stationapi@docker
+    depends_on:
+      - jagdwurst
+      - stationdb
+  weatherapi:
+    build:
+      dockerfile: weatherapi.Dockerfile
+#    container_name: "weatherapi"
+    deploy:
+      replicas: 2
+    restart: always
+    labels:
+      - traefik.enable=true
+      - traefik.http.services.weatherapi.loadbalancer.server.port=80
+      - traefik.http.routers.weatherapi.rule=Host(`draxento.de`) && PathPrefix(`/weather`)
+      - traefik.http.routers.weatherapi.entrypoints=web
+      - traefik.http.middlewares.weatherapi.stripprefix.prefixes=/weather
+      - traefik.http.routers.weatherapi.middlewares=weatherapi@docker
+    depends_on:
+      - jagdwurst
+      - weatherdb
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "traefik"
+    command:
+      #      - --log.level=DEBUG
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      #      - --accesslog
+      - --log
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: always

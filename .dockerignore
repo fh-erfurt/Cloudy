@@ -1,0 +1,5 @@
+.venv
+.env3.9
+.mypy_cache
+__pycache__
+*.pyc
