@@ -17,7 +17,8 @@ Installation
 
 bash
 
-> git clone https://github.com/fh-erfurt/Cloudy.git
+> docker pull ghcr.io/fh-erfurt/cloudy:stationapi
+> docker pull ghcr.io/fh-erfurt/cloudy:weatherapi
 
 Wechseln Sie in das Verzeichnis des Repositories:
 
