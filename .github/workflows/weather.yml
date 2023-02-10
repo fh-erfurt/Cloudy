@@ -39,5 +39,5 @@ jobs:
         file: ./stationapi.Dockerfile
         push: true
         #tags: ${{ steps.meta.outputs.tags }}
-        tags: ghcr.io/fh-erfurt/cloudy:stationapi
+        tags: ghcr.io/fh-erfurt/cloudy:weatherapi
         labels: ${{ steps.meta.outputs.labels }}
