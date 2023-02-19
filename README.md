@@ -1,44 +1,89 @@
-Dieses GitHub Repository enthält eine Konfiguration für eine Anwendung mit Docker Compose. Folgende Dienste sind Teil dieser Konfiguration:
+# Cloudy
 
-    weatherdb (MariaDB)
-    stationdb (MariaDB)
-    grafana
-    jagdwurst (Jaeger Tracer)
-    stationapi
-    weatherapi
-    traefik
+Dieses Repository ist das Ergebnis des Master Modules "Mobile Computing 2" an der FH-Erfurt
 
-Voraussetzung
-    python 3.9
+Es beinhaltet eine Docker - Infrastruktur, welche verwendet wird, um eine Microservice Architektur mit 7 Services zu
+realisieren.
 
-Installation
+- weatherdb (MariaDB)
+- stationdb (MariaDB)
+- grafana
+- jagdwurst (Jaeger Tracer)
+- stationapi (Python REST API)
+- weatherapi (Python REST API)
+- traefik (Load Balancer)
 
-    Clone dieses Repository auf Ihren Computer:
+## 1. Voraussetzungen
 
-bash
+- Eine Domain (Im Fall des Projektes war es draxento.de)
+- Linux Debian 11 oder höher
+- Python 3.9
 
-> docker pull ghcr.io/fh-erfurt/cloudy:stationapi
-> docker pull ghcr.io/fh-erfurt/cloudy:weatherapi
+## 2. Installation
 
-Wechseln Sie in das Verzeichnis des Repositories:
+Für dieses Projekt gibt es zwei Möglichkeiten, um es zu starten.
+Zum einen, die "Out of the box" Ansatz, welcher hier als "Alternativer Ansatz" beschrieben wird.
+Zum Zweiten, der präferierte Ansatz "Klonen und Anpassen". Dies bietet eine deutlich höhere Anpassungsmöglichkeit,
+gegenüber den ersten Ansatz.
 
-bash
->cd Cloudy
+#### Git und Pip
 
-    Führen Sie Docker Compose aus:
+```
+sudo apt update && sudo apt install git python3-pip
+```
 
-docker-compose up -d
+#### Docker
 
-Verwendung
+Für die Installation von Docker und Docker Compose eignet sich die Docker eigene
+Installationsseite (https://docs.docker.com/engine/install/debian/
+und https://docs.docker.com/compose/install/linux/#install-using-the-repository)
 
-Nach der Installation können Sie die einzelnen Dienste unter den folgenden URLs erreichen:
+### 2.1 Klonen und Anpassen
 
-    Grafana: http://grafana.draxento.de
-    Jaeger Tracer: http://tracer.draxento.de
-    Station API: http://draxento.de/station
-    Wetter API: http://draxento.de/weather
+#### Klonen des Git-Repository
 
-Hinweise
+```
+git clone https://github.com/fh-erfurt/Cloudy.git
+```
 
-    Die MariaDB-Datenbanken werden in Volumes gespeichert, um Datenverlust zu vermeiden.
-    Die Dockerfiles für die APIs stationapi und weatherapi müssen im selben Verzeichnis wie die docker-compose.yml-Datei liegen.
+#### Wechseln in das geklonte Verzeichnis
+```
+cd Cloudy
+```
+
+#### Editieren der docker-compose.yml
+
+Alle Vorkommnisse von "draxento.de" sind durch die eigene Domain zu ersetzen.
+
+#### Ausführen 
+```
+docker compose up
+```
+
+#### Nach der Installation können Sie die einzelnen Dienste unter den folgenden URLs erreichen:
+
+```
+Traefik: http://[Eigene Domain]:8080
+Grafana: http://grafana.[Eigene Domain]
+Jaeger Tracer: http://tracer.[Eigene Domain]
+Station API: http://[Eigene Domain]/station/greeting
+Wetter API: http://[Eigene Domain]/weather/greeting
+```
+
+### 2.2 Alternativer Ansatz
+
+#### Pullen des fertigen Images für die GitHub Registry
+
+```
+docker login ghcr.io && docker pull ghcr.io/fh-erfurt/cloudy:stationapi && docker pull ghcr.io/fh-erfurt/cloudy:weatherapi
+```
+
+#### Nach der Installation können Sie die einzelnen Dienste unter den folgenden URLs erreichen:
+
+```
+Traefik: http://draxento.de:8080
+Grafana: http://grafana.draxento.de
+Jaeger Tracer: http://tracer.draxento.de
+Station API: http://draxento.de/station/greeting
+Wetter API: http://draxento.de/weather/greeting
+```
